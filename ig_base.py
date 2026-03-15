@@ -119,7 +119,7 @@ async def get_browser_context(playwright, account):
     import tempfile, json as json_mod, os as os_mod
 
     browser = await playwright.chromium.launch(
-        headless=False,
+        headless=True,
         args=['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
     )
 
