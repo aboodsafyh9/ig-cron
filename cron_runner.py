@@ -41,13 +41,13 @@ async def main():
         if likes_counter <= 0:
             print(f"\n⏰ {now} - تشغيل اللايكات...")
             await run_likes()
-            likes_counter = 300
+            likes_counter = 60
 
         # كومنتات كل 15 دقيقة (900 ثانية)
         if comments_counter <= 0:
             print(f"\n⏰ {now} - تشغيل الكومنتات...")
             await run_comments()
-            comments_counter = 900
+            comments_counter = 60
 
         await asyncio.sleep(30)
         likes_counter -= 30
