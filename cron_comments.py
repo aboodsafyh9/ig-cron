@@ -4,11 +4,10 @@ cron_comments.py - كل 15 دقيقة
 
 import asyncio
 from datetime import datetime
-from pathlib import Path
 from playwright.async_api import async_playwright
 from ig_base import (
     get_active_account, mark_account_failed, mark_account_success,
-    get_active_posts, insert_comment
+    get_active_posts, insert_comment, get_browser_context
 )
 
 
@@ -87,12 +86,7 @@ async def main():
         return
 
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True)
-        session_file = account.get('session_file')
-        if session_file and Path(session_file).exists():
-            context = await browser.new_context(storage_state=session_file)
-        else:
-            context = await browser.new_context()
+        browser, context = await get_browser_context(p, account)
 
         page = await context.new_page()
         await page.route("**/*.{png,jpg,jpeg,gif,woff,woff2,ttf}", lambda r: r.abort())

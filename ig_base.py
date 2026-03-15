@@ -112,3 +112,31 @@ def insert_comment(post_db_id, username, comment_text, comment_url, timestamp):
         "status": "active"
     }, headers=headers)
     return res.status_code in [200, 201]
+
+
+async def get_browser_context(playwright, account):
+    """افتح متصفح مع جلسة من Supabase"""
+    import tempfile, json as json_mod, os as os_mod
+
+    browser = await playwright.chromium.launch(
+        headless=False,
+        args=['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
+    )
+
+    session_data = account.get('session_data')
+    if session_data:
+        # اكتب الـ session في ملف مؤقت
+        tmp = tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False)
+        tmp.write(session_data if isinstance(session_data, str) else json_mod.dumps(session_data))
+        tmp.close()
+        context = await browser.new_context(storage_state=tmp.name)
+        os_mod.unlink(tmp.name)
+    else:
+        # fallback للملف القديم
+        session_file = account.get('session_file')
+        if session_file and Path(session_file).exists():
+            context = await browser.new_context(storage_state=session_file)
+        else:
+            context = await browser.new_context()
+
+    return browser, context
