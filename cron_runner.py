@@ -8,6 +8,11 @@ import asyncio
 import time
 from datetime import datetime
 
+import os
+import sys
+sys.stdout.reconfigure(line_buffering=True)
+
+
 async def run_likes():
     from cron_likes import main as likes_main
     try:
@@ -23,7 +28,9 @@ async def run_comments():
         print(f"❌ خطأ في الكومنتات: {e}")
 
 async def main():
-    print("🚀 Cron Runner شغال...")
+    print("🚀 Cron Runner شغال...", flush=True)
+    print(f"SUPABASE: {os.getenv('SUPABASE_URL', 'NOT SET')}", flush=True)
+
     likes_counter = 0
     comments_counter = 0
 
